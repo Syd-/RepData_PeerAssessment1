@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 ---
 
@@ -16,7 +11,8 @@ From https://github.com/Syd-/RepData_PeerAssessment1
 To prepare the date, we:  
 - read the csv and load it into a dataset.  
 - change the *date* column into a date instead of a string.  
-```{r read_csv}
+
+```r
 dataSet <- read.csv("activity.csv")
 dataSet$date <- as.Date(dataSet$date)
 ```
@@ -25,53 +21,82 @@ dataSet$date <- as.Date(dataSet$date)
 
 ## What is mean total number of steps taken per day?
 We compute total number of steps taken by aggregating steps vs date from the dataset, and ignoring NAs.  
-```{r aggregate_steps}
+
+```r
 totalSteps <- aggregate(steps~date, FUN = sum, na.action = na.omit, data = dataSet)
 ```
 #### Histogram: total steps taken vs date
-```{r histogram_plot}
+
+```r
 library("ggplot2")
 ggplot(data=totalSteps) + geom_histogram(aes(x=date, y=steps), stat="identity")
 ```
 
+![](PA1_template_files/figure-html/histogram_plot-1.png) 
+
 #### Mean: total number of steps taken per day
-```{r mean_steps}
+
+```r
 mean(totalSteps$steps)
 ```
+
+```
+## [1] 10766.19
+```
 #### Median: total number of steps taken per day
-```{r median_steps}
+
+```r
 median(totalSteps$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ---
 
 ## What is the average daily activity pattern?
 We compute mean number of steps taken per interval by aggregating steps vs interval from the dataset, and ignoring NAs.  
-```{r aggregate_interval}
+
+```r
 dailyPattern <- aggregate(steps~interval, FUN = mean, na.action = na.omit, data = dataSet)
 ```
 #### Time Series Plot: average steps taken vs 5-minute intervals
-```{r time_series_plot}
+
+```r
 plot(dailyPattern, type="l")
 ```
 
+![](PA1_template_files/figure-html/time_series_plot-1.png) 
+
 #### The 5 minute interval, on average across all days that contains the maximum number of steps is:
-```{r most_walked_interval}
+
+```r
 dailyPattern[dailyPattern$steps == max(dailyPattern$steps), ]$interval
+```
+
+```
+## [1] 835
 ```
 
 ---
 
 ## Inputing missing values
 #### The total number of rows with missing values is
-```{r how_many_missing}
+
+```r
 sum(is.na(dataSet$steps))
+```
+
+```
+## [1] 2304
 ```
 #### Fill in missing values in the dataset
 The strategy is rather naive:  
 Given an interval with a missing value for a particular day:  
 We insert the mean for the missing interval across all days.  
-```{r fill_in_missing}
+
+```r
 newDataSet <- within(
   dataSet, 
   steps <- ifelse(
@@ -83,17 +108,30 @@ newDataSet <- within(
 newTotalSteps <- aggregate(steps~date, FUN = sum, na.action = na.omit, data = newDataSet)
 ```
 #### Histogram: total steps taken vs date
-```{r histogram_plot_2}
+
+```r
 ggplot(data=newTotalSteps) + geom_histogram(aes(x=date, y=steps), stat="identity")
 ```
 
+![](PA1_template_files/figure-html/histogram_plot_2-1.png) 
+
 #### Mean: total number of steps taken per day
-```{r mean_steps_2}
+
+```r
 mean(newTotalSteps$steps)
 ```
+
+```
+## [1] 10766.19
+```
 #### Median: total number of steps taken per day
-```{r median_steps_2}
+
+```r
 median(newTotalSteps$steps)
+```
+
+```
+## [1] 10766.19
 ```
 Since we chose to replace NA values with the mean for the same interval,  
 - **mean** has stayed the same.  
@@ -104,7 +142,8 @@ Since we chose to replace NA values with the mean for the same interval,
 ## Are there differences in activity patterns between weekdays and weekends?
 
 #### Adding a day column to the new data set that indicates whether a date is a "weekday" or "weekend".  
-```{r weekend_party}
+
+```r
 newDataSet <- cbind(
   newDataSet, 
   day = ifelse(
@@ -119,7 +158,8 @@ newDataSet <- cbind(
 ```
 
 #### Averaging steps taken across intervals for weekdays and weekends
-```{r panel_plot_weekend}
+
+```r
 newDailyPattern <- aggregate(newDataSet$steps, by=list(newDataSet$interval, newDataSet$day), FUN = mean)
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == "weekday"],
@@ -128,6 +168,11 @@ plot(
   ylab="Steps Taken",
   xlab="Interval",
   main="Weekday")
+```
+
+![](PA1_template_files/figure-html/panel_plot_weekend-1.png) 
+
+```r
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == "weekend"],
   newDailyPattern$x[newDailyPattern$Group.2 == "weekend"],
@@ -136,6 +181,8 @@ plot(
   xlab="Interval",
   main="Weekend")
 ```
+
+![](PA1_template_files/figure-html/panel_plot_weekend-2.png) 
 
 From the above, we can conclude that there is more activity on weekends than on weekdays.
 
