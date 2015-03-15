@@ -161,6 +161,7 @@ newDataSet <- cbind(
 
 ```r
 newDailyPattern <- aggregate(newDataSet$steps, by=list(newDataSet$interval, newDataSet$day), FUN = mean)
+par(mfrow=c(2,1))
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == "weekday"],
   newDailyPattern$x[newDailyPattern$Group.2 == "weekday"],
@@ -168,11 +169,6 @@ plot(
   ylab="Steps Taken",
   xlab="Interval",
   main="Weekday")
-```
-
-![](PA1_template_files/figure-html/panel_plot_weekend-1.png) 
-
-```r
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == "weekend"],
   newDailyPattern$x[newDailyPattern$Group.2 == "weekend"],
@@ -182,7 +178,7 @@ plot(
   main="Weekend")
 ```
 
-![](PA1_template_files/figure-html/panel_plot_weekend-2.png) 
+![](PA1_template_files/figure-html/panel_plot_weekend-1.png) 
 
 From the above, we can conclude that there is more activity on weekends than on weekdays.
 
