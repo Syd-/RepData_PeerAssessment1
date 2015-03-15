@@ -160,8 +160,11 @@ newDataSet <- cbind(
 #### Averaging steps taken across intervals for weekdays and weekends
 
 ```r
+# Aggregate across interval AND weekend|weekday
 newDailyPattern <- aggregate(newDataSet$steps, by=list(newDataSet$interval, newDataSet$day), FUN = mean)
+# Panels for panel plot
 par(mfrow=c(2,1))
+# Plot Weekday
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == "weekday"],
   newDailyPattern$x[newDailyPattern$Group.2 == "weekday"],
@@ -169,6 +172,7 @@ plot(
   ylab="Steps Taken",
   xlab="Interval",
   main="Weekday")
+# Plot Weekend
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == "weekend"],
   newDailyPattern$x[newDailyPattern$Group.2 == "weekend"],

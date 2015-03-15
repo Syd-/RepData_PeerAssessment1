@@ -162,8 +162,11 @@ newTotalSteps &lt;- aggregate(steps~date, FUN = sum, na.action = na.omit, data =
 </div>
 <div id="averaging-steps-taken-across-intervals-for-weekdays-and-weekends" class="section level4">
 <h4>Averaging steps taken across intervals for weekdays and weekends</h4>
-<pre class="r"><code>newDailyPattern &lt;- aggregate(newDataSet$steps, by=list(newDataSet$interval, newDataSet$day), FUN = mean)
+<pre class="r"><code># Aggregate across interval AND weekend|weekday
+newDailyPattern &lt;- aggregate(newDataSet$steps, by=list(newDataSet$interval, newDataSet$day), FUN = mean)
+# Panels for panel plot
 par(mfrow=c(2,1))
+# Plot Weekday
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == &quot;weekday&quot;],
   newDailyPattern$x[newDailyPattern$Group.2 == &quot;weekday&quot;],
@@ -171,6 +174,7 @@ plot(
   ylab=&quot;Steps Taken&quot;,
   xlab=&quot;Interval&quot;,
   main=&quot;Weekday&quot;)
+# Plot Weekend
 plot(
   newDailyPattern$Group.1[newDailyPattern$Group.2 == &quot;weekend&quot;],
   newDailyPattern$x[newDailyPattern$Group.2 == &quot;weekend&quot;],
